@@ -77,6 +77,4 @@ bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
     CloseHandle(fileHandle);
 
     return true;
-
-
 };
