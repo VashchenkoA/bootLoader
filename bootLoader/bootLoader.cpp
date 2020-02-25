@@ -24,7 +24,7 @@ void PrintBootSectInfo(BOOT_NTFS pBootRecord)
 
 bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
 {
-
+    //Open drive as file
     HANDLE fileHandle = CreateFileA(
         fileNameFormated.c_str(),
         GENERIC_READ,
@@ -40,9 +40,11 @@ bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
         perror("Error: ");
     }
 
+    //Positioning on zero offset
     LARGE_INTEGER sectorOffset;
     sectorOffset.QuadPart = 0;
 
+    //Setting a position
     unsigned long currentPosition = SetFilePointer(
         fileHandle,
         sectorOffset.LowPart,
@@ -55,10 +57,13 @@ bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
         perror("Error: ");
     }
 
+    //Memory allocation in stack
     BYTE dataBuffer[1024];
 
+    //Result of reading bytes
     DWORD bytesRead;
 
+    //Data reading
     bool readResult = ReadFile(
         fileHandle,
         dataBuffer,
@@ -72,8 +77,10 @@ bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
         perror("Error: ");
     };
 
+    //Initialize pointer
     *pBootRecord = *reinterpret_cast<BOOT_NTFS*>(dataBuffer);
 
+    //Close file
     CloseHandle(fileHandle);
 
     return true;

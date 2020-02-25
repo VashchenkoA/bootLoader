@@ -1,17 +1,20 @@
 #pragma once
 
-#ifdef BOOTREADER_EXPORTS
-#define BOOTREADER_API __declspec(dllexport)
+//Making DLL exportable and importable
+#ifdef BOOTLOADER_EXPORTS
+#define BOOTLOADER_API __declspec(dllexport)
 #else
-#define BOOTREADER_API __declspec(dllimport)
+#define BOOTLOADER_API __declspec(dllimport)
 #endif
 
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
 
+//Making 1 byte alignment
 #pragma pack(push, 1)
 
+//Create structure of NTFS $Boot header
 typedef struct _BOOT_NTFS
 {
     BYTE    jump[3];
@@ -28,12 +31,14 @@ typedef struct _BOOT_NTFS
     UINT64  num_secs;
     UINT64  LCNofMFT;
     UINT64  LCNofMFTMirr;
-    DWORD  clustersPerMFT;
+    DWORD   clustersPerMFT;
     UINT32  clustersPerIndex;
     UINT64  volumeSerialNumber;
 } BOOT_NTFS;
 
+//Back to standard alignment
 #pragma pack(pop)
 
-extern "C++" BOOTREADER_API bool bootInfo(std::string fileNameFormated, BOOT_NTFS * pBootRecord);
-extern "C++" BOOTREADER_API void PrintBootSectInfo(BOOT_NTFS pBootRecord);
+//External linkage of DLL functions
+extern "C++" BOOTLOADER_API bool bootInfo(std::string fileNameFormated, BOOT_NTFS * pBootRecord);
+extern "C++" BOOTLOADER_API void PrintBootSectInfo(BOOT_NTFS pBootRecord);
