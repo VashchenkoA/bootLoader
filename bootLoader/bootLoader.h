@@ -15,7 +15,7 @@
 #pragma pack(push, 1)
 
 //Create structure of NTFS $Boot header
-typedef struct _BOOT_NTFS
+typedef struct BOOT_NTFS
 {
     BYTE    jump[3];
     BYTE    name[8];

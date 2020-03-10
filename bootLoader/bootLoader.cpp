@@ -78,7 +78,7 @@ bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
     };
 
     //Initialize pointer
-    *pBootRecord = *reinterpret_cast<BOOT_NTFS*>(dataBuffer);
+    pBootRecord = reinterpret_cast<BOOT_NTFS*>(dataBuffer);
 
     //Close file
     CloseHandle(fileHandle);
