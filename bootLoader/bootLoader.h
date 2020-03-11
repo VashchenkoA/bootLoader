@@ -10,12 +10,13 @@
 #include <iostream>
 #include <windows.h>
 #include <stdio.h>
+using namespace std;
 
 //Making 1 byte alignment
 #pragma pack(push, 1)
 
 //Create structure of NTFS $Boot header
-typedef struct BOOT_NTFS
+typedef struct _BOOT_NTFS
 {
     BYTE    jump[3];
     BYTE    name[8];
@@ -40,5 +41,5 @@ typedef struct BOOT_NTFS
 #pragma pack(pop)
 
 //External linkage of DLL functions
-extern "C++" BOOTLOADER_API bool bootInfo(std::string fileNameFormated, BOOT_NTFS * pBootRecord);
+extern "C++" BOOTLOADER_API bool bootInfo(string fileNameFormated, BOOT_NTFS * pBootRecord);
 extern "C++" BOOTLOADER_API void PrintBootSectInfo(BOOT_NTFS pBootRecord);

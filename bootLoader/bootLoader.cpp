@@ -22,11 +22,11 @@ void PrintBootSectInfo(BOOT_NTFS pBootRecord)
     cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
 }
 
-bool bootInfo(std::string fileNameFormated, BOOT_NTFS* pBootRecord)
+bool bootInfo(string fileNameFormated, BOOT_NTFS* pBootRecord)
 {
     //Open drive as file
     HANDLE fileHandle = CreateFileA(
-        fileNameFormated.c_str(),
+        fileNameFormated.c_str(),//convert string to LPCSTR
         GENERIC_READ,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         NULL,
