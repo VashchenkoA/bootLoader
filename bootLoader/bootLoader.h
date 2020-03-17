@@ -41,5 +41,5 @@ typedef struct _BOOT_NTFS
 #pragma pack(pop)
 
 //External linkage of DLL functions
-extern "C++" BOOTLOADER_API bool bootInfo(string fileNameFormated, BOOT_NTFS * pBootRecord);
+extern "C++" BOOTLOADER_API bool bootInfo(const WCHAR *fileNameFormated, BOOT_NTFS *pBootRecord);
 extern "C++" BOOTLOADER_API void PrintBootSectInfo(BOOT_NTFS pBootRecord);
