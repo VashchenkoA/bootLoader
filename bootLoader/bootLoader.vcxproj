@@ -151,13 +151,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bootLoader.h" />
+    <ClInclude Include="exFAT_FileSystem.h" />
+    <ClInclude Include="FAT_FileSystem.h" />
+    <ClInclude Include="FileSystemClass.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="NTFS_FileSystem.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="bootLoader.cpp" />
+    <ClCompile Include="exFAT_FileSystem.cpp" />
+    <ClCompile Include="FAT_FileSystem.cpp" />
+    <ClCompile Include="FileSystemClass.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="NTFS_FileSystem.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
