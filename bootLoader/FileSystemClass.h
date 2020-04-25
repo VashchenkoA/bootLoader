@@ -8,13 +8,7 @@
 #endif
 
 
-class FileSystemClass {
-public:
-	virtual void PrintBootSectInfo();
-	virtual bool bootInfo();
-	static FileSystemClass * getFSinformation();
-};
-
 
 //External linkage of DLL functions
-extern "C++" BOOTLOADER_API void getFSinformation();
+extern "C++" BOOTLOADER_API void PrintBootSectInfo();
+extern "C++" BOOTLOADER_API void bootInfo();
