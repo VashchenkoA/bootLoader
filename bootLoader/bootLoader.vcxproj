@@ -152,12 +152,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="FileSystemClass.h" />
+    <ClInclude Include="FileSystemFactory.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dll.cpp" />
+    <ClCompile Include="exFAT_FileSystem.cpp" />
+    <ClCompile Include="FAT_FileSystem.cpp" />
     <ClCompile Include="FileSystemClass.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FileSystemFactory.cpp" />
+    <ClCompile Include="NTFS_FileSystem.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

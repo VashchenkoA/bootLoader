@@ -1,13 +1,9 @@
 #pragma once
 
-//Making DLL exportable and importable
-#ifdef BOOTLOADER_EXPORTS
-#define BOOTLOADER_API __declspec(dllexport)
-#else
-#define BOOTLOADER_API __declspec(dllimport)
-#endif
-
-
-
-//External linkage of DLL functions
-extern "C" BOOTLOADER_API void getDevName();
+class FileSystemClass {
+public:
+	virtual typedef struct Boot_Record;
+	virtual void PrintBootSectInfo() = 0;
+	virtual void bootInfo(char devName) = 0;
+	virtual ~FileSystemClass() {}
+};
