@@ -267,14 +267,11 @@ public:
 	}
 };
 
-static char getDevName() {
+void getDevName() {
 	char volumeName;
 	printf("Enter device name letter (A, B, C and etc.):");
 	scanf_s("%c", &volumeName, 1);
-	
-
 	FileSystemClass* fs = FileSystemFactory::createFSobject(volumeName);
 	fs->bootInfo(volumeName);
 	fs->PrintBootSectInfo();
-
 }

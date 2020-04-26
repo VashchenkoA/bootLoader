@@ -10,5 +10,4 @@
 
 
 //External linkage of DLL functions
-extern "C++" BOOTLOADER_API void PrintBootSectInfo();
-extern "C++" BOOTLOADER_API void bootInfo();
+extern "C++" BOOTLOADER_API void getDevName();
