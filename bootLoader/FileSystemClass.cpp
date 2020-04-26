@@ -9,7 +9,6 @@ using namespace std;
 
 class FileSystemClass {
 public:
-	typedef unsigned char byte;
 	virtual typedef struct Boot_Record;
 	virtual void PrintBootSectInfo() = 0;
 	virtual void bootInfo(char devName) = 0;
@@ -21,21 +20,21 @@ public:
 	
 	typedef struct
 	{
-		byte garbage[3];
-		byte oemName[8]; //  
-		byte garbage2[61];
-		unsigned long long secPerFS; // 
-		unsigned long firstFATSector; // 
-		unsigned long sectorsPerFAT; // 
-		unsigned long clusterBitmapStartSector; // 
-		unsigned long clustersPerFS; // 
-		unsigned long rootDirCluster; // 
-		unsigned long volumeSerialNumber; // 
-		byte garbage3[4];
-		byte degreeOfSectorSize; // 
-		byte degreeOfClusterMultiplier; // 
-		byte garbage4[400];
-		byte signatureFAT[2]; // 
+		BYTE garbage[3];
+		BYTE oemName[8]; //  
+		BYTE garbage2[61];
+		ULONGLONG secPerFS; // 
+		DWORD firstFATSector; // 
+		DWORD sectorsPerFAT; // 
+		DWORD clusterBitmapStartSector; // 
+		DWORD clustersPerFS; // 
+		DWORD rootDirCluster; // 
+		DWORD volumeSerialNumber; // 
+		BYTE garbage3[4];
+		BYTE degreeOfSectorSize; // 
+		BYTE degreeOfClusterMultiplier; // 
+		BYTE garbage4[400];
+		BYTE signatureFAT[2]; // 
 	} Boot_Record;
 
 private:
@@ -87,21 +86,21 @@ public:
 
 	typedef struct
 	{
-		byte garbage[3];
-		byte oemName[8]; //  
-		byte garbage2[61];
-		unsigned long long secPerFS; // 
-		unsigned long firstFATSector; // 
-		unsigned long sectorsPerFAT; // 
-		unsigned long clusterBitmapStartSector; // 
-		unsigned long clustersPerFS; // 
-		unsigned long rootDirCluster; // 
-		unsigned long volumeSerialNumber; // 
-		byte garbage3[4];
-		byte degreeOfSectorSize; // 
-		byte degreeOfClusterMultiplier; // 
-		byte garbage4[400];
-		byte signatureFAT[2]; // 
+		BYTE garbage[3];
+		BYTE oemName[8]; //  
+		BYTE garbage2[61];
+		ULONGLONG secPerFS; // 
+		DWORD firstFATSector; // 
+		DWORD sectorsPerFAT; // 
+		DWORD clusterBitmapStartSector; // 
+		DWORD clustersPerFS; // 
+		DWORD rootDirCluster; // 
+		DWORD volumeSerialNumber; // 
+		BYTE garbage3[4];
+		BYTE degreeOfSectorSize; // 
+		BYTE degreeOfClusterMultiplier; // 
+		BYTE garbage4[400];
+		BYTE signatureFAT[2]; // 
 	} Boot_Record;
 
 private:
