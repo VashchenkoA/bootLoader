@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include <stdio.h>
 #include "pch.h"
 #include <iostream>
@@ -9,45 +9,16 @@ using namespace std;
 
 class FileSystemClass {
 public:
+	typedef unsigned char byte;
+	virtual typedef struct Boot_Record;
 	virtual void PrintBootSectInfo() = 0;
-	virtual bool bootInfo() = 0;
+	virtual void bootInfo(char devName) = 0;
 	virtual ~FileSystemClass() {}
-	static char* getFileSystemName(char devName) {
-		CHAR volumeName[MAX_PATH + 1] = { 0 };
-		CHAR fileSystemName[MAX_PATH + 1] = { 0 };
-		DWORD serialNumber = 0;
-		DWORD maxComponentLen = 0;
-		DWORD fileSystemFlags = 0;
-
-		string rootPathName;
-		rootPathName = devName;
-		string rootPathNameFormatted = rootPathName + ":";
-
-		GetVolumeInformationA(
-			rootPathNameFormatted.c_str(),
-			volumeName,
-			sizeof(volumeName),
-			&serialNumber,
-			&maxComponentLen,
-			&fileSystemFlags,
-			fileSystemName,
-			sizeof(fileSystemName));
-		return fileSystemName;
-	}
-	static char getDevName() {
-		char volumeName;
-		printf("Enter device name letter (A, B, C and etc.):");
-		scanf_s("%c", &volumeName, 1);
-		return volumeName;
-	}
-	static FileSystemClass* createFSobject();
 };
 
-class FAT_FileSystem : public FileSystemClass
-{
+class FAT_FileSystem : public FileSystemClass{
 public:
-	typedef unsigned char byte;
-
+	
 	typedef struct
 	{
 		byte garbage[3];
@@ -65,9 +36,14 @@ public:
 		byte degreeOfClusterMultiplier; // 
 		byte garbage4[400];
 		byte signatureFAT[2]; // 
-	} BOOT_FAT;
+	} Boot_Record;
 
-	void PrintBootSectInfo (BOOT_FAT pBootRecord){
+private:
+	Boot_Record pBootRecord;
+
+public:
+
+	void PrintBootSectInfo (){
 		cout << "File system type: " << pBootRecord.oemName << endl;
 		cout << "Sectors count: " << pBootRecord.secPerFS << endl;
 		cout << "First FAT sector: " << pBootRecord.firstFATSector << endl;
@@ -81,76 +57,33 @@ public:
 		cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
 	}
 
-	bool bootInfo(char devName, BOOT_FAT* pBootRecord){
-
+	void bootInfo(char devName){
 		string fileNameFormated = "\\\\.\\"s + devName + ":";
-
-		HANDLE fileHandle = CreateFileA(
-			fileNameFormated.c_str(),//convert string to LPCSTR
-			GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL,
-			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			NULL
-		);
-
-		if (fileHandle == INVALID_HANDLE_VALUE)
+		HANDLE hDevice = NULL;
+		hDevice = CreateFileA(
+			fileNameFormated.c_str(), 
+			GENERIC_READ,       
+			FILE_SHARE_READ,    
+			NULL,               
+			OPEN_EXISTING,      
+			0,                  
+			NULL);              
+		if (!hDevice)
 		{
-			perror("Error: ");
+			printf("Error! Device is Empty!");
 		}
-
-		//Positioning on zero offset
-		LARGE_INTEGER sectorOffset;
-		sectorOffset.QuadPart = 0;
-
-		//Setting a position
-		unsigned long currentPosition = SetFilePointer(
-			fileHandle,
-			sectorOffset.LowPart,
-			&sectorOffset.HighPart,
-			FILE_BEGIN
-		);
-
-		if (currentPosition != sectorOffset.LowPart)
-		{
-			perror("Error: ");
-		}
-
-		//Memory allocation in stack
-		BYTE dataBuffer[1024];
-
-		//Result of reading bytes
-		DWORD bytesRead;
-
-		//Data reading
-		bool readResult = ReadFile(
-			fileHandle,
-			dataBuffer,
-			1024,
-			&bytesRead,
-			NULL
-		);
-
-		if (!readResult || bytesRead != 1024)
-		{
-			perror("Error: ");
-		};
-
-		//Initialize pointer
-		pBootRecord = reinterpret_cast<BOOT_FAT*>(dataBuffer);
-
-		//Close file
-		CloseHandle(fileHandle);
-
-		return true;
+		BYTE bBootSector[512];
+		DWORD dwBytesRead(0);
+		Boot_Record pBootRecord;
+		ReadFile(hDevice, bBootSector, 512, &dwBytesRead, NULL);
+		CloseHandle(hDevice);
+		memcpy(&pBootRecord, bBootSector, 512);
+		this->pBootRecord = pBootRecord;
 	}
 };
 
-class exFAT_FileSystem : public FileSystemClass
-{
+class exFAT_FileSystem : public FileSystemClass{
 public:
-	typedef unsigned char byte;
 
 	typedef struct
 	{
@@ -169,9 +102,12 @@ public:
 		byte degreeOfClusterMultiplier; // 
 		byte garbage4[400];
 		byte signatureFAT[2]; // 
-	} BOOT_exFAT;
+	} Boot_Record;
 
-	void PrintBootSectInfo(BOOT_exFAT pBootRecord) {
+private:
+	Boot_Record pBootRecord;
+
+	void PrintBootSectInfo() {
 		cout << "File system type: " << pBootRecord.oemName << endl;
 		cout << "Sectors count: " << pBootRecord.secPerFS << endl;
 		cout << "First FAT sector: " << pBootRecord.firstFATSector << endl;
@@ -185,67 +121,28 @@ public:
 		cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
 	}
 
-	bool bootInfo(const WCHAR* fileNameFormated, BOOT_exFAT* pBootRecord) {
-		//Open drive as file
-		HANDLE fileHandle = CreateFileW(
-			fileNameFormated,//convert string to LPCSTR
+	void bootInfo(char devName) {
+		string fileNameFormated = "\\\\.\\"s + devName + ":";
+		HANDLE hDevice = NULL;
+		hDevice = CreateFileA(
+			fileNameFormated.c_str(),
 			GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
+			FILE_SHARE_READ,
 			NULL,
 			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			NULL
-		);
-
-		if (fileHandle == INVALID_HANDLE_VALUE)
+			0,
+			NULL);
+		if (!hDevice)
 		{
-			perror("Error: ");
+			printf("Error! Device is Empty!");
 		}
-
-		//Positioning on zero offset
-		LARGE_INTEGER sectorOffset;
-		sectorOffset.QuadPart = 0;
-
-		//Setting a position
-		unsigned long currentPosition = SetFilePointer(
-			fileHandle,
-			sectorOffset.LowPart,
-			&sectorOffset.HighPart,
-			FILE_BEGIN
-		);
-
-		if (currentPosition != sectorOffset.LowPart)
-		{
-			perror("Error: ");
-		}
-
-		//Memory allocation in stack
-		BYTE dataBuffer[1024];
-
-		//Result of reading bytes
-		DWORD bytesRead;
-
-		//Data reading
-		bool readResult = ReadFile(
-			fileHandle,
-			dataBuffer,
-			1024,
-			&bytesRead,
-			NULL
-		);
-
-		if (!readResult || bytesRead != 1024)
-		{
-			perror("Error: ");
-		};
-
-		//Initialize pointer
-		pBootRecord = reinterpret_cast<BOOT_exFAT*>(dataBuffer);
-
-		//Close file
-		CloseHandle(fileHandle);
-
-		return true;
+		BYTE bBootSector[512];
+		DWORD dwBytesRead(0);
+		Boot_Record pBootRecord;
+		ReadFile(hDevice, bBootSector, 512, &dwBytesRead, NULL);
+		CloseHandle(hDevice);
+		memcpy(&pBootRecord, bBootSector, 512);
+		this->pBootRecord = pBootRecord;
 	}
 };
 
@@ -274,11 +171,14 @@ public:
 		DWORD   clustersPerMFT;
 		UINT32  clustersPerIndex;
 		UINT64  volumeSerialNumber;
-	} BOOT_NTFS;
+	} Boot_Record;
 	//Back to standard alignment
 	#pragma pack(pop)
 
-	void PrintBootSectInfo(BOOT_NTFS pBootRecord) {
+private:
+	Boot_Record pBootRecord;
+
+	void PrintBootSectInfo() {
 		cout << "File system type: " << pBootRecord.name << endl;
 		cout << "Sector size: " << pBootRecord.sec_size << endl;
 		cout << "Sectors per cluster: " << pBootRecord.secs_cluster << endl;
@@ -293,89 +193,88 @@ public:
 		cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
 	}
 
-	bool bootInfo(const WCHAR* fileNameFormated, BOOT_NTFS* pBootRecord) {
-		//Open drive as file
-		HANDLE fileHandle = CreateFileW(
-			fileNameFormated,//convert string to LPCSTR
+	void bootInfo(char devName) {
+		string fileNameFormated = "\\\\.\\"s + devName + ":";
+		HANDLE hDevice = NULL;
+		hDevice = CreateFileA(
+			fileNameFormated.c_str(),
 			GENERIC_READ,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
+			FILE_SHARE_READ,
 			NULL,
 			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			NULL
-		);
-
-		if (fileHandle == INVALID_HANDLE_VALUE)
+			0,
+			NULL);
+		if (!hDevice)
 		{
-			perror("Error: ");
+			printf("Error! Device is Empty!");
 		}
-
-		//Positioning on zero offset
-		LARGE_INTEGER sectorOffset;
-		sectorOffset.QuadPart = 0;
-
-		//Setting a position
-		unsigned long currentPosition = SetFilePointer(
-			fileHandle,
-			sectorOffset.LowPart,
-			&sectorOffset.HighPart,
-			FILE_BEGIN
-		);
-
-		if (currentPosition != sectorOffset.LowPart)
-		{
-			perror("Error: ");
-		}
-
-		//Memory allocation in stack
-		BYTE dataBuffer[1024];
-
-		//Result of reading bytes
-		DWORD bytesRead;
-
-		//Data reading
-		bool readResult = ReadFile(
-			fileHandle,
-			dataBuffer,
-			1024,
-			&bytesRead,
-			NULL
-		);
-
-		if (!readResult || bytesRead != 1024)
-		{
-			perror("Error: ");
-		};
-
-		//Initialize pointer
-		pBootRecord = reinterpret_cast<BOOT_NTFS*>(dataBuffer);
-
-		//Close file
-		CloseHandle(fileHandle);
-
-		return true;
+		BYTE bBootSector[512];
+		DWORD dwBytesRead(0);
+		Boot_Record pBootRecord;
+		ReadFile(hDevice, bBootSector, 512, &dwBytesRead, NULL);
+		CloseHandle(hDevice);
+		memcpy(&pBootRecord, bBootSector, 512);
+		this->pBootRecord = pBootRecord;
 	}
 
 };
 
-FileSystemClass* FileSystemClass::createFSobject() {
 
-	CHAR devName = getDevName();
-	const char* fileSystemName = getFileSystemName(devName);
-	FileSystemClass* fs;
+class FileSystemFactory{
+public:
+	static char* getFileSystemName(char devName)
+	{
+		CHAR volumeName[MAX_PATH + 1] = { 0 };
+		CHAR fileSystemName[MAX_PATH + 1] = { 0 };
+		DWORD serialNumber = 0;
+		DWORD maxComponentLen = 0;
+		DWORD fileSystemFlags = 0;
 
-	if (strcmp(fileSystemName, "exFAT") == 0) {
-		fs = new exFAT_FileSystem();
-		return fs;
-	}
-	else if (strcmp(fileSystemName, "FAT") == 0) {
-		fs = new FAT_FileSystem();
-		return fs;
-	}
-	else if (strcmp(fileSystemName, "NTFS") == 0) {
-		fs = new NTFS_FileSystem();
-		return fs;
-	}
+		string rootPathName;
 
+		rootPathName = devName;
+		string rootPathNameFormatted = rootPathName + ":";
+		// ïîëó÷åíèå òèïà ÔÑ íà íîñèòåëå
+		GetVolumeInformationA(
+			rootPathNameFormatted.c_str(),
+			volumeName,
+			sizeof(volumeName),
+			&serialNumber,
+			&maxComponentLen,
+			&fileSystemFlags,
+			fileSystemName,
+			sizeof(fileSystemName));
+		return(fileSystemName);
+	}
+	static FileSystemClass* createFSobject(char devName) {
+
+		const char* fileSystemName = getFileSystemName(devName);
+
+		if (strcmp(fileSystemName, "exFAT") == 0) {
+			FileSystemClass* fs = new exFAT_FileSystem();
+			return fs;
+		}
+		else if (strcmp(fileSystemName, "FAT") == 0) {
+			FileSystemClass* fs = new FAT_FileSystem();
+			return fs;
+		}
+		else if (strcmp(fileSystemName, "NTFS") == 0) {
+			FileSystemClass* fs = new NTFS_FileSystem();
+			return fs;
+		}
+
+
+	}
+};
+
+static char getDevName() {
+	char volumeName;
+	printf("Enter device name letter (A, B, C and etc.):");
+	scanf_s("%c", &volumeName, 1);
+	
+
+	FileSystemClass* fs = FileSystemFactory::createFSobject(volumeName);
+	fs->bootInfo(volumeName);
+	fs->PrintBootSectInfo();
 
 }
