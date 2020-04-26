@@ -17,7 +17,7 @@ public:
 
 class FAT_FileSystem : public FileSystemClass{
 public:
-
+	#pragma pack(push, 1)
 	typedef struct
 	{
 		BYTE jump[3];
@@ -36,7 +36,7 @@ public:
 		DWORD largeSectors; // 
 		BYTE signature;
 	} Boot_Record;
-
+	#pragma pack(pop)
 private:
 	Boot_Record pBootRecord;
 
@@ -54,7 +54,7 @@ public:
 		cout << "Sectors per FAT: " << pBootRecord.sectorsPerFAT << endl;
 		cout << "Sectors per track: " << pBootRecord.sectorsPerTrack << endl;
 		cout << "Number of heads: " << pBootRecord.numberOfHeads << endl;
-		cout << "Hidden sectors sectors: " << pBootRecord.hiddenSectors << endl;
+		cout << "Hidden sectors: " << pBootRecord.hiddenSectors << endl;
 		cout << "Large sectors: " << pBootRecord.largeSectors << endl;
 		cout << "FAT signature: " << pBootRecord.signature << endl;
 	}
