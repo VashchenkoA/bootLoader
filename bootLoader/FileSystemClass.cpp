@@ -34,12 +34,7 @@ public:
 		WORD numberOfHeads; // 
 		DWORD hiddenSectors;
 		DWORD largeSectors; // 
-		BYTE physicalDiskNumber;
-		BYTE currentHead;
 		BYTE signature;
-		BYTE volumeSerialNumber[4];
-		BYTE volumeLabel[11];
-		BYTE systemID[8];
 	} Boot_Record;
 
 private:
@@ -61,12 +56,7 @@ public:
 		cout << "Number of heads: " << pBootRecord.numberOfHeads << endl;
 		cout << "Hidden sectors sectors: " << pBootRecord.hiddenSectors << endl;
 		cout << "Large sectors: " << pBootRecord.largeSectors << endl;
-		cout << "Physical disk number: " << pBootRecord.physicalDiskNumber << endl;
-		cout << "Current head: " << pBootRecord.currentHead << endl;
 		cout << "FAT signature: " << pBootRecord.signature << endl;
-		cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
-		cout << "Volume label: " << pBootRecord.volumeLabel << endl;
-		cout << "System ID: " << pBootRecord.systemID << endl;
 	}
 
 	void bootInfo(char devName){
