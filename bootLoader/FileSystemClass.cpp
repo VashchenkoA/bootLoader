@@ -20,21 +20,26 @@ public:
 	
 	typedef struct
 	{
-		BYTE garbage[3];
+		BYTE jump[3];
 		BYTE oemName[8]; //  
-		BYTE garbage2[61];
-		ULONGLONG secPerFS; // 
-		DWORD firstFATSector; // 
-		DWORD sectorsPerFAT; // 
-		DWORD clusterBitmapStartSector; // 
-		DWORD clustersPerFS; // 
-		DWORD rootDirCluster; // 
-		DWORD volumeSerialNumber; // 
-		BYTE garbage3[4];
-		BYTE degreeOfSectorSize; // 
-		BYTE degreeOfClusterMultiplier; // 
-		BYTE garbage4[400];
-		BYTE signatureFAT[2]; // 
+		WORD bytesPerSector; // 
+		BYTE sectorsPerCluster; // 
+		WORD reservedSectors; // 
+		BYTE numberOfFATtables; // 
+		WORD rootEntries; // 
+		WORD smallSectors; // 
+		BYTE mediaType; // 
+		WORD sectorsPerFAT;
+		WORD sectorsPerTrack; // 
+		WORD numberOfHeads; // 
+		DWORD hiddenSectors;
+		DWORD largeSectors; // 
+		BYTE physicalDiskNumber;
+		BYTE currentHead;
+		BYTE signature;
+		BYTE volumeSerialNumber[4];
+		BYTE volumeLabel[11];
+		BYTE systemID[8];
 	} Boot_Record;
 
 private:
@@ -44,16 +49,24 @@ public:
 
 	void PrintBootSectInfo (){
 		cout << "File system type: " << pBootRecord.oemName << endl;
-		cout << "Sectors count: " << pBootRecord.secPerFS << endl;
-		cout << "First FAT sector: " << pBootRecord.firstFATSector << endl;
+		cout << "Bytes per sector: " << pBootRecord.bytesPerSector << endl;
+		cout << "Sectors per cluster: " << pBootRecord.sectorsPerCluster << endl;
+		cout << "Reserved sectors: " << pBootRecord.reservedSectors << endl;
+		cout << "Number of FAT tables: " << pBootRecord.numberOfFATtables << endl;
+		cout << "Root entries: " << pBootRecord.rootEntries << endl;
+		cout << "Number of small sectors: " << pBootRecord.smallSectors << endl;
+		cout << "Media type: " << pBootRecord.mediaType << endl;
 		cout << "Sectors per FAT: " << pBootRecord.sectorsPerFAT << endl;
-		cout << "Cluster bitmap start sector: " << pBootRecord.clusterBitmapStartSector << endl;
-		cout << "Clusters count: " << pBootRecord.clustersPerFS << endl;
-		cout << "NRoot directory cluster: " << pBootRecord.rootDirCluster << endl;
-		cout << "Degree of sector size: " << pBootRecord.degreeOfSectorSize << endl;
-		cout << "Degree of cluster multiplier: " << pBootRecord.degreeOfClusterMultiplier << endl;
-		cout << "FAT signature: " << pBootRecord.signatureFAT << endl;
+		cout << "Sectors per track: " << pBootRecord.sectorsPerTrack << endl;
+		cout << "Number of heads: " << pBootRecord.numberOfHeads << endl;
+		cout << "Hidden sectors sectors: " << pBootRecord.hiddenSectors << endl;
+		cout << "Large sectors: " << pBootRecord.largeSectors << endl;
+		cout << "Physical disk number: " << pBootRecord.physicalDiskNumber << endl;
+		cout << "Current head: " << pBootRecord.currentHead << endl;
+		cout << "FAT signature: " << pBootRecord.signature << endl;
 		cout << "Volume serial number: " << pBootRecord.volumeSerialNumber << endl;
+		cout << "Volume label: " << pBootRecord.volumeLabel << endl;
+		cout << "System ID: " << pBootRecord.systemID << endl;
 	}
 
 	void bootInfo(char devName){
