@@ -17,7 +17,7 @@ public:
 
 class FAT_FileSystem : public FileSystemClass{
 public:
-	
+	#pragma pack(push, 1)
 	typedef struct
 	{
 		BYTE jump[3];
@@ -41,7 +41,7 @@ public:
 		BYTE volumeLabel[11];
 		BYTE systemID[8];
 	} Boot_Record;
-
+	#pragma pack(pop)
 private:
 	Boot_Record pBootRecord;
 
@@ -96,7 +96,7 @@ public:
 
 class exFAT_FileSystem : public FileSystemClass{
 public:
-
+	#pragma pack(push, 1)
 	typedef struct
 	{
 		BYTE garbage[3];
@@ -115,7 +115,7 @@ public:
 		BYTE garbage4[400];
 		BYTE signatureFAT[2]; //
 	} Boot_Record;
-
+	#pragma pack(pop)
 private:
 	Boot_Record pBootRecord;
 
