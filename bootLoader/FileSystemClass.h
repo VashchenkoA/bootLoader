@@ -10,4 +10,4 @@
 
 
 //External linkage of DLL functions
-extern "C++" BOOTLOADER_API void getDevName();
+extern "C" BOOTLOADER_API void getDevName();
