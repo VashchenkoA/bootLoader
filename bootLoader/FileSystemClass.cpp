@@ -100,7 +100,7 @@ public:
 		BYTE degreeOfSectorSize; // 
 		BYTE degreeOfClusterMultiplier; // 
 		BYTE garbage4[400];
-		BYTE signatureFAT[2]; // 
+		BYTE signatureFAT[2]; //
 	} Boot_Record;
 
 private:
@@ -113,7 +113,7 @@ private:
 		cout << "Sectors per FAT: " << pBootRecord.sectorsPerFAT << endl;
 		cout << "Cluster bitmap start sector: " << pBootRecord.clusterBitmapStartSector << endl;
 		cout << "Clusters count: " << pBootRecord.clustersPerFS << endl;
-		cout << "NRoot directory cluster: " << pBootRecord.rootDirCluster << endl;
+		cout << "Root directory cluster: " << pBootRecord.rootDirCluster << endl;
 		cout << "Degree of sector size: " << pBootRecord.degreeOfSectorSize << endl;
 		cout << "Degree of cluster multiplier: " << pBootRecord.degreeOfClusterMultiplier << endl;
 		cout << "FAT signature: " << pBootRecord.signatureFAT << endl;
@@ -268,7 +268,7 @@ public:
 
 void getDevName() {
 	char volumeName;
-	printf("Enter device name letter (A, B, C and etc.):");
+	printf("Enter device name letter (A, B, C and etc.):\n");
 	scanf_s("%c", &volumeName, 1);
 	FileSystemClass* fs = FileSystemFactory::createFSobject(volumeName);
 	fs->bootInfo(volumeName);
